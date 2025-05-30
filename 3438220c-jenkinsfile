@@ -10,8 +10,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker rm -f server1-3438220c || true
-                        docker run -dit --name server1-3438220c -p 32700:80 svrimage3438220c
+                       sudo docker rm -f server1-3438220c || true
+                       sudo docker run -dit --name server1-3438220c -p 32700:80 svrimage3438220c
                     """
                 }
                 echo "ST2-3438220c: Server1 is successfully created"
