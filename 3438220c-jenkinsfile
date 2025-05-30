@@ -1,1 +1,63 @@
+pipeline {
+    agent any
+    stages {
+        stage('ST1-3438220c') {
+            steps {
+                echo "ST1-3438220c: Setup Release Environment Completed."
+            }
+        }
+        stage('ST2-3438220c') {
+            steps {
+                script {
+                    sh """
+                        docker rm -f server1-3438220c || true
+                        docker run -dit --name server1-3438220c -p 32700:80 svr-image-3438220c
+                    """
+                }
+                echo "ST2-3438220c: Server1 is successfully created"
+            }
+        }
+        stage('ST3-3438220c') {
+            steps {
+                echo "ST3-3438220c: Server1 is healthy – Health check done"
+            }
+        }
+        stage('ST4-Parallel-3438220c') {
+            parallel {
+                stage('ST4A-3438220c') {
+                    steps {
+                        echo "ST4A-3438220c: SQLI Check Completed"
+                    }
+                }
+                stage('ST4B-3438220c') {
+                    steps {
+                        echo "ST4B-3438220c: XSS Check Completed"
+                    }
+                }
+            }
+        }
+        stage('ST5-3438220c') {
+            steps {
+                script {
+                    def userInput = input(id: 'Continue', message: 'Continue the pipeline?', parameters: [choice(choices: ['Proceed', 'Abort'], description: '', name: 'decision')])
+                    if (userInput == 'Abort') {
+                        error("Pipeline aborted by user.")
+                    } else {
+                        echo "ST5-3438220c : Continue the pipeline."
+                    }
+                }
+            }
+        }
+        stage('ST6-3438220c') {
+            when {
+                expression {
+                    currentBuild.rawBuild.getAction(hudson.model.ParametersAction)?.getParameter("decision")?.value == "Proceed"
+                }
+            }
+            steps {
+                echo "ST6-3438220c : Ready for next phase"
+            }
+        }
+    }
+}
 
